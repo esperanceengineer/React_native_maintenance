@@ -6,7 +6,7 @@ const ITEMS = "ITEMS";
 //ACTIONS CREATORS  
 const addItem = (objet) => ({
     type: ADD_ITEM,
-    objet
+    text:objet
 });
 
 const items = () => ({

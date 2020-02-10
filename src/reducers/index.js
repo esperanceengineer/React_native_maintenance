@@ -1,17 +1,8 @@
-import {ADD_ITEM,ITEMS} from '../actions'
+import {combineReducers} from 'redux';
+import items from './items';
+import visibilityFilter from './visibilityFilter';
 
-const reducer = (state = [],action ) => {
-    switch (action.type) {
-        case ADD_ITEM:
-            return [
-                ...state,
-                action.objet
-            ];
-        case ITEMS:
-            return state;
-        default:
-            return state;
-    }
-}
-
-export default reducer;
+export default combineReducers({
+    items,
+    visibilityFilter
+});
