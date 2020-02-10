@@ -5,7 +5,7 @@ const items = (state = [],action ) => {
         case ADD_ITEM:
             return [...state,action.text];
         case ITEMS:
-            return state;
+            return action.data;
         default:
             return state;
     }

@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Picker,KeyboardAvoidingView, Dimensions,TextInput,TouchableOpacity} from 'react-native';
+import { Text, View, StyleSheet, Picker,KeyboardAvoidingView, Dimensions,TextInput,TouchableOpacity,ActivityIndicator} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 const {width} = Dimensions.get('window');
 import {connect} from 'react-redux';
-import {addItem} from '../actions'
+import NetInfo from '@react-native-community/netinfo';
+import * as ImagePicker from 'expo-image-picker'
+import {remoteAddItem} from '../actions';
+import Useful from '../api/useful';
+import firebase from '../api/firebase'
 
 class AddScreen extends Component {
     constructor(props) {
@@ -11,7 +15,9 @@ class AddScreen extends Component {
         this.state = {
             type:"js",
             details:'',
-            title:''
+            title:'',
+            loading:false,
+            image:''
         }
     }
     onchangeText = (key,value) => {
@@ -20,14 +26,69 @@ class AddScreen extends Component {
         })
     }
     addItem = () => {
-        let {title,details,type} = this.state;
+        let {title,details,type,image} = this.state;
         let objet = {
             title,
             details,
-            type
+            type,
+            image
         }
-        if (title == '' || details == '') return;
-        this.props.dispatch(addItem(objet));
+        if (title == '' || details == '' || image == '') return;
+        this.props.dispatch(remoteAddItem(objet));
+        this.setState({
+            title:'',
+            image:'',
+            details:'',
+            type:''
+        })
+        this.props.navigation.navigate('Home');
+    }
+
+    uploadImage = async () => {
+        let isConnected = await NetInfo.isConnected.fetch();
+        let continued = true;
+        if(isConnected) {
+            if(this.state.image != '') return;
+            this.setState({loading:true});
+            let uploadUrl = '';
+            let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+            try {
+                if(permissionResult.granted  === false) {
+                    Useful.displayAlert("Erreur","Permission d'accès à la camera refusée");
+                    return;
+                }
+                let pickerResult = await ImagePicker.launchImageLibraryAsync();
+                if (pickerResult.cancelled === true) return;
+                uploadUrl = await firebase.uploadImage(pickerResult.uri);
+                
+            } catch (error) {
+                Useful.displayAlert('Erreur','Rechoisissez une image');
+                continued = false;
+            } finally {
+                this.setState({image:uploadUrl,loading:false});
+                if(continued) {
+                    Useful.showToast('Votre image est uploadée');
+                }
+            }
+        }else {
+            Useful.displayAlert("Information","Vous n'êtes pas connecté sur internet")
+        }
+    }
+    renderButtonSingup = () => {
+        let {loading} = this.state
+        if (loading) {
+            return (
+                <ActivityIndicator
+                    animating={true}
+                    size='large'
+                    color='#fff'
+                />
+            )
+        }
+
+        return (
+            <Text style={styles.btnLoginText}>Ajouter</Text>
+        )
     }
     render() {
         const {type,title,details} = this.state
@@ -40,11 +101,11 @@ class AddScreen extends Component {
                     style={{height: 50}}
                     onValueChange={type =>this.setState({type})
                 }>
-                    <Picker.Item label="Java" value="java" />
-                    <Picker.Item label="JavaScript" value="js"/>
-                    <Picker.Item label="PHP" value="php"/>
-                    <Picker.Item label="C#" value="c#"/>
-                    <Picker.Item label="Python" value="py"/>
+                    <Picker.Item label="Java" value="Java" />
+                    <Picker.Item label="JavaScript" value="JavaScript"/>
+                    <Picker.Item label="PHP" value="PHP"/>
+                    <Picker.Item label="C#" value="C#"/>
+                    <Picker.Item label="Python" value="Python"/>
                 </Picker>
                 </View>
                 <KeyboardAvoidingView style={styles.inputContainer} behavior="padding" enabled>
@@ -77,8 +138,11 @@ class AddScreen extends Component {
                         numberOfLines={5}
                     />
                 </KeyboardAvoidingView>
+                <TouchableOpacity style={[styles.btnLogin,{backgroundColor:'#eaeaea'}]} onPress={this.uploadImage} >
+                    <Text style={{color:'black',fontSize: 18}}>Image</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={this.addItem} style={styles.btnLogin} >
-                    <Text style={styles.btnLoginText}>Ajouter</Text>
+                    {this.renderButtonSingup()}
                 </TouchableOpacity>
             </SafeAreaView>
         )
