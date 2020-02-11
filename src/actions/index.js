@@ -10,11 +10,8 @@ const addItem = (objet) => ({
     text:objet
 });
 
-const remoteAddItem = (objet) => {
-    return function(dispatch) {
-        firebase.database().push(objet);
-        //dispatch(addItem(objet));
-    }
+const remoteAddItem = objet => async dispatch => {
+    firebase.database().push(objet);
 }
 
 const items = (data) => ({
@@ -22,27 +19,19 @@ const items = (data) => ({
     data
 });
 
-const watchItems = () => {
-    return function(dispatch) {
-        firebase.database().on('value',function(snapshot) {
-            let list = [];
-            snapshot.forEach(function(data) {
-                list.push(data.val())
-            })
-            dispatch(items(list))
-        },function(err) {
-            console.log('Error',err)
+const watchItems = () => async dispatch => {
+    let list = [];
+    firebase.database().on('value',snapshot => {
+        snapshot.forEach(data => {
+            list.push(data.val())
         })
-    }
-}
-const NoWatchItems = () => {
-    firebase.database().off();
+        dispatch(items(list));
+    })
 }
 
 export {
     ADD_ITEM,
     ITEMS,
     remoteAddItem,
-    watchItems,
-    NoWatchItems
+    watchItems
 }

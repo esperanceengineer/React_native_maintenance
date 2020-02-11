@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 function DetailsScreen({route}) {
     const {item} = route.params
-    console.log(item);
     return (
         <SafeAreaView style={styles.container}>
             <Image
@@ -12,8 +11,8 @@ function DetailsScreen({route}) {
                 source={{uri:item.image}}
             />
             <View>
-                <Text style={styles.titleStyle} >{item.title}</Text>
-                <Text style={styles.defaultText}>{item.type}</Text>
+                <Text style={styles.titleStyle} >{item.type}</Text>
+                <Text style={styles.defaultText}>{item.jour}</Text>
                 <Text style={styles.details} >{item.details}</Text>
             </View>
         </SafeAreaView>
