@@ -4,42 +4,40 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
 import {ListItem,SearchBar} from 'react-native-elements';
 import {watchItems} from '../actions';
+import AnimatedItem from '../api/AnimatedItem';
 
 class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:false,
-            items:[]
+            loading:false
         }
         this.filteredItems = [];
         this.props.dispatch(watchItems());
     }
-    componentDidMount() {
-        //this.filteredItems = [...this.props.items];
-    }
     searchFilterItems = val => {
-        let newItems = this.filteredItems.filter(item => item.title.indexOf(val) > -1);
-        //this.props.items = [...newItems];
+        //let items = this.filteredItems.filter(item => item.type.indexOf(val) > -1);
     }
     navigateToDetails = (item) => {
         this.props.navigation.navigate('Details',{item})
     }
     _keyExtractor = (item,index) => index.toString();
 
-    renderItem = ({item}) => {
+    renderItem = ({item,index}) => {
         return (
-            <ListItem
-                title={item.type}
-                subtitle={item.jour}
-                leftAvatar={{
-                    source:{uri:item.image},
-                    showEditButton:true,
-                    title:item.type[0]
-                    }}
-                onPress={() => this.navigateToDetails(item)}
-                chevron
-            />
+            <AnimatedItem delay={index * 100}>
+                <ListItem
+                    title={item.type}
+                    subtitle={item.jour}
+                    leftAvatar={{
+                        source:{uri:item.image},
+                        showEditButton:true,
+                        title:item.type[0]
+                        }}
+                    onPress={() => this.navigateToDetails(item)}
+                    chevron
+                />
+            </AnimatedItem>
         );
     }
     renderHeader = () => (
@@ -47,7 +45,6 @@ class HomeScreen extends Component {
             placeholder='Rechercher'
             placeholderTextColor='#fff'
             lightTheme
-            round
             autoCorrect={false}
             onChangeText={text => this.searchFilterItems(text)}
         />
@@ -86,7 +83,7 @@ class HomeScreen extends Component {
     }
 
     render() {
-        const {items} = this.props
+        const {items} = this.props;
         return (
             <SafeAreaView style={styles.container}>
                 <FlatList
@@ -111,6 +108,6 @@ export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
     container:{
-        flex:1,
+        flex:1
     }
 })

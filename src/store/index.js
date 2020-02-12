@@ -9,13 +9,13 @@ let persistConfig = {
     storage:AsyncStorage
 }
 
-//let rootReducer = persistReducer(persistConfig,reducer);
-let store = createStore(reducer,applyMiddleware(thunk));
-//let persistor = persistStore(store);
+let rootReducer = persistReducer(persistConfig,reducer);
+let store = createStore(rootReducer,applyMiddleware(thunk));
+let persistor = persistStore(store);
 
 
 export {
-    //persistor,
+    persistor,
     store
 }
 
