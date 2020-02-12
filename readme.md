@@ -1,19 +1,13 @@
-#Project Title
+# Project Title
 Gestion de Maintenance informatique
 
-##Getting Started
-Suivez minutieusement les instructions suivantes pour éviter tout problème.
-
-
-##Requirements
+## Requirements
 Nodejs
 Expo
 yarn
 
-##Installing
+## Setup
+    yarn install --force
 
-    Supprimer les fichiers ou dossiers suivants: node_modules et yarn.lock
-    installer les dépendances: yarn install
-
-###Launch
+### Launch
 yarn start
