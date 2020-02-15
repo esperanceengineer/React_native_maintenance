@@ -36,7 +36,7 @@ function HomeScreenStack({navigation}) {
             onPress={()=>navigation.navigate('Add')}
             />)
             }} />
-            <HomeStack.Screen name="Details" component={DetailsScreen}/>
+            <HomeStack.Screen name="Details" component={DetailsScreen} options={({route}) => ({title:route.params.item.type})} />
         </HomeStack.Navigator>
     )
 }
