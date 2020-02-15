@@ -1,11 +1,11 @@
 import React from 'react';
 import { Text, View, StyleSheet,Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import colors from '../api/theme'
 
 function DetailsScreen({route}) {
     const {item} = route.params
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Image
                 style={styles.imageStyle}
                 source={{uri:item.image}}
@@ -15,7 +15,7 @@ function DetailsScreen({route}) {
                 <Text style={styles.defaultText}>{item.jour}</Text>
                 <Text style={styles.details} >{item.details}</Text>
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
@@ -24,6 +24,7 @@ export default DetailsScreen;
 const styles = StyleSheet.create({
     container:{
         flex:1,
+        backgroundColor:'#fff'
     },
     imageStyle: {
         height:169,
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         fontSize: 25,
         marginTop: 5,
-        color:'#000000'
+        color:colors.primary
     },
     details: {
         fontStyle:'italic',
@@ -42,6 +43,9 @@ const styles = StyleSheet.create({
     },
     defaultText:{
         marginLeft:5,
-        textAlign:'left'
+        textAlign:'left',
+        marginBottom:5,
+        color:colors.primary,
+        opacity:0.7
     },
 })

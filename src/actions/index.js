@@ -10,8 +10,17 @@ const addItem = (objet) => ({
     text:objet
 });
 
-const remoteAddItem = objet => async dispatch => {
-    firebase.database().push(objet);
+const remoteAddItem = objet => dispatch => {
+    let list = [];
+    firebase.database().push(objet).then(() => {
+        console.log('Data Added');
+        firebase.database().once('value',snapshot => {
+            snapshot.forEach(data => {
+                list.push(data.val())
+            })
+            dispatch(items(list));
+        })
+    });
 }
 
 const items = (data) => ({
@@ -32,6 +41,5 @@ const watchItems = () => async dispatch => {
 export {
     ADD_ITEM,
     ITEMS,
-    remoteAddItem,
-    watchItems
+    remoteAddItem
 }

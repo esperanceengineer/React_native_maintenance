@@ -1,8 +1,10 @@
 {
   "expo": {
-    "name": "Blank Template",
+    "name": "Maintenance",
+    "description": "Application de gestion de maintenance informatique",
     "slug": "Maintenance",
     "privacy": "public",
+    "owner":"Esperance",
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
@@ -13,7 +15,7 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "splash": {
-      "image": "./assets/screen.png",
+      "image": "./assets/splashscreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

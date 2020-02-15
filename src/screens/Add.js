@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, Picker,KeyboardAvoidingView, Dimensions,TextInput,TouchableOpacity,ActivityIndicator} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { Text, View, StyleSheet, Picker,KeyboardAvoidingView, Dimensions,TextInput,TouchableOpacity,ActivityIndicator, Animated} from 'react-native';
 import {connect} from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,7 +9,8 @@ import {Avatar,Image} from 'react-native-elements'
 import {remoteAddItem} from '../actions';
 import Useful from '../api/useful';
 import firebase from '../api/firebase';
-const {width} = Dimensions.get('window');
+import colors from '../api/theme';
+const {width,height} = Dimensions.get('window');
 
 class AddScreen extends Component {
     constructor(props) {
@@ -23,6 +23,7 @@ class AddScreen extends Component {
             image:'',
             overviewImage:null,
             date:new Date(),
+            pan: new Animated.Value(height/2),
             types: [
                 "Logiciel",
                 "Imprimante",
@@ -35,6 +36,12 @@ class AddScreen extends Component {
                 "Souris"
             ]
         }
+    }
+    componentDidMount() {
+        Animated.spring(this.state.pan,{
+            toValue:0,
+            useNativeDriver:true
+        }).start();
     }
     formatDate = (date) => {
         var monthNames = [
@@ -68,8 +75,8 @@ class AddScreen extends Component {
             jour
         }
         if (details == '' || image == '') return;
-       this.props.dispatch(remoteAddItem(objet));
-        this.props.navigation.navigate('Home');
+        this.props.dispatch(remoteAddItem(objet));
+        this.props.navigation.navigate('Home',{objet});
     }
 
     uploadImage = async () => {
@@ -121,10 +128,11 @@ class AddScreen extends Component {
             <Text style={styles.btnLoginText}>Valider</Text>
         )
     }
+
     render() {
         const {type,details,show,date,overviewImage,types} = this.state
         return (
-            <SafeAreaView style={styles.container}>
+            <Animated.View style={[styles.container,{transform: [{translateY:this.state.pan}]}]}>
 
                 <View>
                 <Text style={styles.text}>Type d'équipement</Text>
@@ -198,7 +206,7 @@ class AddScreen extends Component {
                         {this.renderButtonSingup()}
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </Animated.View>
         )
     }
 }
@@ -209,6 +217,8 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor:'#fff',
+        height:height,
+        paddingTop:10
     },
     containerImage: {
         flex:1,
@@ -249,7 +259,7 @@ const styles = StyleSheet.create({
         width:"80%",
         height:50,
         borderRadius: 10,
-        backgroundColor: 'black',
+        backgroundColor: colors.primary,
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',

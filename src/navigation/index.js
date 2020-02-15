@@ -9,23 +9,30 @@ import HomeScreen from '../screens/Home';
 import AboutScreen from '../screens/About';
 import AddScreen from '../screens/Add';
 import DetailsScreen from '../screens/Details';
+import colors from '../api/theme';
 
 //Stack screens
 const HomeStack = createStackNavigator();
 function HomeScreenStack({navigation}) {
     return(
-        <HomeStack.Navigator>
+        <HomeStack.Navigator screenOptions={{
+            headerTitleStyle: {
+                color:colors.primary,
+                fontWeight:'bold'
+            },
+            headerTintColor:colors.primary
+        }} >
             <HomeStack.Screen name="Home" component={HomeScreen} options={{
             headerLeft: () => (<Ionicons 
             style={{paddingLeft:10}} 
             name="ios-menu" size={30}
-            color="black" 
+            color={colors.primary} 
             onPress={()=>navigation.openDrawer()}/>),
 
             headerRight:() => (<Ionicons 
             style={{paddingRight:10}} 
-            name="ios-add-circle" size={30} 
-            color="black"
+            name="ios-add" size={30} 
+            color={colors.primary}
             onPress={()=>navigation.navigate('Add')}
             />)
             }} />
@@ -42,9 +49,13 @@ function AboutScreenStack({navigation}) {
             headerLeft: () => (<Ionicons 
             style={{paddingLeft:10}} 
             name="ios-menu" size={30}
-            color="black" 
+            color={colors.primary} 
             onPress={()=>navigation.openDrawer()}/>),
-            title:'A propos' 
+            title:'A propos',
+            headerTitleStyle: {
+                color:colors.primary,
+                fontWeight:'bold'
+            }
             }}/>
         </AboutStack.Navigator>
     )
@@ -57,9 +68,13 @@ function AddScreenStack({navigation}) {
             headerLeft: () => (<Ionicons 
             style={{paddingLeft:10}} 
             name="ios-menu" size={30}
-            color="black" 
+            color={colors.primary}
             onPress={()=>navigation.openDrawer()}/>),
-            title:'Ajout'
+            title:'Ajout',
+            headerTitleStyle: {
+                color:colors.primary,
+                fontWeight:'bold'
+            }
             }}/>
         </AddStack.Navigator>
     )
@@ -70,9 +85,9 @@ const Drawer = createDrawerNavigator();
 function CustomDrawerContent(props) {
     return (
       <DrawerContentScrollView {...props} style={{flex:1}}>
-        <View style={{flex:1,backgroundColor:'#eaeaea',alignItems:'center',padding:10}}>
+        <View style={{flex:1,alignItems:'center',padding:10,backgroundColor:colors.primary}}>
             <Image
-                source={require('../assets/logo.jpg')}
+                source={require('../assets/logo.png')}
                 style={{height:120,width:120,borderRadius:60}}
             />
         </View>

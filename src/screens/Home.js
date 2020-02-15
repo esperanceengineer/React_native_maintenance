@@ -1,26 +1,39 @@
 import React ,{Component} from 'react';
 import { Text, View, StyleSheet,FlatList,ActivityIndicator } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {connect} from 'react-redux';
-import {ListItem,SearchBar} from 'react-native-elements';
-import {watchItems} from '../actions';
+import {ListItem,SearchBar, colors} from 'react-native-elements';
 import AnimatedItem from '../api/AnimatedItem';
+import firebase from '../api/firebase';
 
 class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:false
+            loading:false,
+            items:[]
         }
         this.filteredItems = [];
-        this.props.dispatch(watchItems());
+    }
+    componentDidMount() {
+        let list = [];
+        firebase.database().once('value',snapshot => {
+            snapshot.forEach(data => {
+                list.push(data.val())
+            })
+            this.setState({items:list});
+            this.filteredItems = [...list];
+        })
+    }
+    componentWillUnmount() {
+        firebase.database().off("value");;
     }
     searchFilterItems = val => {
-        //let items = this.filteredItems.filter(item => item.type.indexOf(val) > -1);
+        let items = this.filteredItems.filter(item => item.type.indexOf(val) > -1);
+        this.setState({items});
     }
     navigateToDetails = (item) => {
         this.props.navigation.navigate('Details',{item})
-    }
+        }
     _keyExtractor = (item,index) => index.toString();
 
     renderItem = ({item,index}) => {
@@ -35,7 +48,7 @@ class HomeScreen extends Component {
                         title:item.type[0]
                         }}
                     onPress={() => this.navigateToDetails(item)}
-                    chevron
+                    chevron={{color:colors.primary}}
                 />
             </AnimatedItem>
         );
@@ -53,8 +66,8 @@ class HomeScreen extends Component {
         return (
           <View
             style={{
-              height: 3,
-              backgroundColor: "#eee",
+              height: 1,
+              backgroundColor: colors.primary,
               marginLeft: "14%"
             }}
           />
@@ -81,11 +94,27 @@ class HomeScreen extends Component {
         }
         return null
     }
-
+    updateState = (items) => {
+        this.setState({items})
+    }
+    /**
+     * 
+     * @param {*} nextProps 
+     * @param {*} nextState 
+     * Cette methode est appelée pour chaque changement de props, et 
+     * n'est pas appelée pour la première fois où le component est monté
+     */
+    shouldComponentUpdate(nextProps,nextState) {
+        if(nextProps.items.length > this.props.items.length) {
+            this.updateState(nextProps.items);
+            return true;
+        }
+        return true;
+    }
     render() {
-        const {items} = this.props;
+        const {items} = this.state;
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <FlatList
                     data={items}
                     renderItem={this.renderItem}
@@ -95,7 +124,7 @@ class HomeScreen extends Component {
                     ListEmptyComponent={this.renderEmptyComponent}
                     ItemSeparatorComponent={this.renderSeparator}
                 />
-            </SafeAreaView>
+            </View>
         )
     }
 }
@@ -108,6 +137,7 @@ export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
     container:{
-        flex:1
+        flex:1,
+        backgroundColor:"#fff"
     }
 })

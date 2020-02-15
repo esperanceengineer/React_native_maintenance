@@ -1,22 +1,33 @@
 /*Example of Social Icon*/
 import React, { Component } from 'react';
 //import react in our project
-import { StyleSheet, View, Text, ScrollView,Image } from 'react-native';
+import { StyleSheet, View, Text, ScrollView,Image,Animated } from 'react-native';
 //import basic react native components
 import { SocialIcon } from 'react-native-elements';
+import colors from '../api/theme'
+
 //import to show social icons
 
 export default class AboutScreen extends Component {
+   state = {
+     pan: new Animated.Value(300)
+   }
+  componentDidMount() {
+    Animated.spring(this.state.pan ,{
+      toValue:0,
+      useNativeDriver:true
+    }).start();
+  } 
   render() {
     return (
-      <ScrollView>
+      <Animated.ScrollView style={{backgroundColor:'#fff',transform: [{translateX:this.state.pan}]}}>
         <View style={styles.MainContainer}>
             <Image
-                source={require('../assets/logo.jpg')}
+                source={require('../assets/about_2.png')}
                 style={{height:180}}
             />
             <View style={{flex:1,flexDirection:'column',margin:5}}>
-                <Text style={{fontWeight:'bold',fontSize:25,textAlign:'center',marginBottom:5}}>Maintenance</Text>
+                <Text style={{fontWeight:'bold',fontSize:25,textAlign:'center',marginBottom:5,color:colors.primary}}>Maintenance</Text>
                 <Text style={{fontStyle:'italic',fontSize:18}}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                 </Text>
@@ -66,7 +77,7 @@ export default class AboutScreen extends Component {
               </View>
             </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     );
   }
 }
