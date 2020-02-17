@@ -15,12 +15,13 @@ export default class AboutScreen extends Component {
   componentDidMount() {
     Animated.spring(this.state.pan ,{
       toValue:0,
+      delay:70,
       useNativeDriver:true
     }).start();
   } 
   render() {
     return (
-      <Animated.ScrollView style={{backgroundColor:'#fff',transform: [{translateX:this.state.pan}]}}>
+      <Animated.ScrollView style={{backgroundColor:'#fff',transform: [{translateY:this.state.pan}]}}>
         <View style={styles.MainContainer}>
             <Image
                 source={require('../assets/about_2.png')}

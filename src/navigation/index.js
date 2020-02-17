@@ -51,7 +51,7 @@ function AboutScreenStack({navigation}) {
             name="ios-menu" size={30}
             color={colors.primary} 
             onPress={()=>navigation.openDrawer()}/>),
-            title:'A propos',
+            title:'Apropos',
             headerTitleStyle: {
                 color:colors.primary,
                 fontWeight:'bold'
@@ -103,7 +103,7 @@ export default function App() {
                 <Drawer.Navigator initialRouteName="Home" drawerContent={props => CustomDrawerContent(props)} >
                     <Drawer.Screen name="Add"component={AddScreenStack} options={{drawerLabel:"Ajouter"}} />
                     <Drawer.Screen name="Home"component={HomeScreenStack} />
-                    <Drawer.Screen name="About"component={AboutScreenStack} options={{drawerLabel:"A propos"}} />
+                    <Drawer.Screen name="About"component={AboutScreenStack} options={{drawerLabel:"Apropos"}} />
                 </Drawer.Navigator>
             </NavigationContainer>
         </SafeAreaProvider>

@@ -23,7 +23,7 @@ class AddScreen extends Component {
             image:'',
             overviewImage:null,
             date:new Date(),
-            pan: new Animated.Value(height/2),
+            pan: new Animated.Value(-height/2),
             types: [
                 "Logiciel",
                 "Imprimante",
@@ -34,15 +34,19 @@ class AddScreen extends Component {
                 "Station de travail",
                 "Téléphone",
                 "Souris"
-            ]
+            ],
+            messageErreur:'',
+            detailsBool:false
         }
     }
     componentDidMount() {
         Animated.spring(this.state.pan,{
             toValue:0,
+            delay:50,
             useNativeDriver:true
         }).start();
     }
+
     formatDate = (date) => {
         var monthNames = [
           "Janvier", "Fevrirer", "Mars",
@@ -59,7 +63,9 @@ class AddScreen extends Component {
       }
     onchangeText = (key,value) => {
         this.setState({
-            [key]:value
+            [key]:value,
+            detailsBool:false,
+            messageErreur:""
         })
     }
     onChangeDate =(event,date) => {
@@ -74,7 +80,16 @@ class AddScreen extends Component {
             image,
             jour
         }
+        if (details == "") {
+            this.setState({messageErreur:"Les détails de la panne sont importants",detailsBool:true});
+            return;
+        }
+        if (image == "") {
+            this.setState({messageErreur:"Une photo de la panne est importante"});
+            return;
+        }
         if (details == '' || image == '') return;
+        this.setState({details:"",image:"",overviewImage:""});
         this.props.dispatch(remoteAddItem(objet));
         this.props.navigation.navigate('Home',{objet});
     }
@@ -95,7 +110,7 @@ class AddScreen extends Component {
                 }
                 let pickerResult = await ImagePicker.launchImageLibraryAsync();
                 if (pickerResult.cancelled === true) return;
-                this.setState({overviewImage:pickerResult.uri});
+                this.setState({overviewImage:pickerResult.uri,messageErreur:""});
                 overviewImageUrl = pickerResult.uri
                 uploadUrl = await firebase.uploadImage(pickerResult.uri);
                 
@@ -105,7 +120,7 @@ class AddScreen extends Component {
             } finally {
                 this.setState({image:uploadUrl,overviewImage:overviewImageUrl,loading:false});
                 if(continued) {
-                    Useful.showToast('Votre image est uploadée');
+                    Useful.showToast('Votre photo a été bien téléchargée');
                 }
             }
         }else {
@@ -130,9 +145,9 @@ class AddScreen extends Component {
     }
 
     render() {
-        const {type,details,show,date,overviewImage,types} = this.state
+        const {type,details,show,date,overviewImage,types,messageErreur,detailsBool} = this.state
         return (
-            <Animated.View style={[styles.container,{transform: [{translateY:this.state.pan}]}]}>
+            <Animated.View style={[styles.container,{transform: [{translateX:this.state.pan}]}]}>
 
                 <View>
                 <Text style={styles.text}>Type d'équipement</Text>
@@ -145,7 +160,7 @@ class AddScreen extends Component {
                 }
                 </Picker>
                 </View>
-                <KeyboardAvoidingView style={[styles.inputContainer,{borderBottomColor:'#eaeaea',borderBottomWidth:2,marginBottom:5}]} behavior="padding" enabled>
+                <KeyboardAvoidingView style={[styles.inputContainer,{borderBottomColor:detailsBool?"red":'#eaeaea',borderBottomWidth:2,marginBottom:5}]} behavior="padding" enabled>
                     <TextInput
                         style={styles.textArea}
                         placeholder='Ecrire le constat'
@@ -201,6 +216,13 @@ class AddScreen extends Component {
                         }  
                     </View>
                 </View>
+                {
+                    messageErreur != "" && (
+                    <View style={{alignItems:'center'}}>
+                        <Text style={{color:'red'}}>{messageErreur}</Text>
+                    </View>
+                    )
+                }
                 <View style={{alignItems:'center'}}>
                     <TouchableOpacity onPress={this.addItem} style={styles.btnLogin} >
                         {this.renderButtonSingup()}

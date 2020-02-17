@@ -9,7 +9,7 @@ class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading:false,
+            loading:true,
             items:[]
         }
         this.filteredItems = [];
@@ -20,7 +20,7 @@ class HomeScreen extends Component {
             snapshot.forEach(data => {
                 list.push(data.val())
             })
-            this.setState({items:list});
+            this.setState({items:list,loading:false});
             this.filteredItems = [...list];
         })
     }
@@ -28,7 +28,11 @@ class HomeScreen extends Component {
         firebase.database().off("value");;
     }
     searchFilterItems = val => {
-        let items = this.filteredItems.filter(item => item.type.indexOf(val) > -1);
+        let items = this.filteredItems.filter(item => {
+            let value = val.toUpperCase();
+            let itemVal = item.type.toUpperCase();
+            if (itemVal.indexOf(value) > -1) return item;
+        });
         this.setState({items});
     }
     navigateToDetails = (item) => {
@@ -38,7 +42,7 @@ class HomeScreen extends Component {
 
     renderItem = ({item,index}) => {
         return (
-            <AnimatedItem delay={index * 100}>
+            <AnimatedItem delay={index * 50}>
                 <ListItem
                     title={item.type}
                     subtitle={item.jour}
